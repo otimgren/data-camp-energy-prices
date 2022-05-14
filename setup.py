@@ -4,7 +4,7 @@ VERSION = "0.0.1"
 DESCRIPTION = "A data science project"
 
 setup(
-    name="[package_name]",
+    name="energy_prices",
     version=VERSION,
     author="Oskari Timgren",
     description=DESCRIPTION,
