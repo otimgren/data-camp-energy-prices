@@ -1,10 +1,10 @@
 from setuptools import find_packages, setup
 
-VERSION = ""
-DESCRIPTION = ""
+VERSION = "0.0.1"
+DESCRIPTION = "A data science project"
 
 setup(
-    name="",
+    name="[package_name]",
     version=VERSION,
     author="Oskari Timgren",
     description=DESCRIPTION,
