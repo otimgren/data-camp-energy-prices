@@ -14,12 +14,26 @@ class Pipeline:
     """
     Class for pipeline that transforms data, fits a model and makes 
     predictions.
+
+    inputs:
+    preprocessors: Transformers that don't need to be fit and are run on all data
+                    (make sure to not leak information!)
+    transformers: Transformers that are fit only on training data (if they need
+                  to be fit)
     """
+    preprocessors: List[Transformer]
     transformers: List[Transformer]
     model: Model
 
     def __post_init__(self):
         self.save_fname = None
+
+    def preprocess(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies the preprocessors to the dataframe
+        """
+        for preprocessor in self.preprocessors:
+            X = preprocessor.transform(X)
 
     def fit_transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -69,6 +83,8 @@ class Pipeline:
         Fit-transforms X_train using the transformers, trains model based on
         X_train and y_train, and transforms and makes predictions for X_test
         """
+        X_train = self.preprocess(X_train)
+        X_test = self.preprocess(X_test)
         X_train = self.fit_transform(X_train)
         X_test = self.transform(X_test)
         return self.model_fit_predict(X_train, y_train, X_test)
