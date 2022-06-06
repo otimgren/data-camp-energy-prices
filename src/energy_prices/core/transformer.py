@@ -27,6 +27,9 @@ class Transformer(TransformerABC):
     def __init__(self):
         self.default_attrs = {}
 
+    def __post_init__(self):
+        self.default_attrs = {}
+
     def fit_transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Fits the transformer and then transforms the data, and returns

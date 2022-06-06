@@ -14,9 +14,11 @@ def load_optimized_pipeline(fname: str) -> Pipeline:
 
     return pipeline
 
-def load_optimized_params(fname: str) -> dict:
+def load_optimized_params(model: Model) -> dict:
     """
     Load optimized parameters for a given model.
     """
-    #TO DO
-    pass
+    study_name = model.__class__.__name__
+    storage_name = "sqlite:///tuning/{}.db".format(study_name)
+    study = optuna.load_study()
+    return study.best_params

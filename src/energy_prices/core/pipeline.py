@@ -35,6 +35,8 @@ class Pipeline:
         for preprocessor in self.preprocessors:
             X = preprocessor.transform(X)
 
+        return X
+
     def fit_transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Fits the transformers, transforms the data and returns transformed
@@ -78,16 +80,22 @@ class Pipeline:
         self.model.fit(X_train, y_train)
         return self.model.predict(X_test)
 
-    def fit_predict(self, X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame) -> pd.DataFrame:
+    def fit_predict(self, train: pd.DataFrame, test: pd.DataFrame) -> pd.DataFrame:
         """
         Fit-transforms X_train using the transformers, trains model based on
         X_train and y_train, and transforms and makes predictions for X_test
         """
-        X_train = self.preprocess(X_train)
-        X_test = self.preprocess(X_test)
-        X_train = self.fit_transform(X_train)
-        X_test = self.transform(X_test)
-        return self.model_fit_predict(X_train, y_train, X_test)
+        train = train.copy()
+        test = test.copy()
+        train = self.preprocess(train)
+        test = self.preprocess(test)
+        train = self.fit_transform(train)
+        test = self.transform(test)
+        y_train = train.pop('price')
+        X_train = train
+        y_test = test.pop('price')
+        X_test = test
+        return self.model_fit_predict(X_train, y_train, X_test), y_test
 
     def save(self, base_directory = 'models') -> None:
         """

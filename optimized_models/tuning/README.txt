@@ -1,1 +1,0 @@
-Optuna studies are saved here so they can be easily loaded.

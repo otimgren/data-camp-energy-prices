@@ -22,7 +22,7 @@ class CorrectBuyPercentage(Metric):
     results in making the correct decision to purchase.
     """
     def eval(self, df:pd.DataFrame) -> float:
-        return np.mean(df.y_true==df.y_pred)
+        return np.mean(df.true_buy==df.predicted_buy)
 
 class POMP(Metric):
     """
@@ -30,7 +30,7 @@ class POMP(Metric):
     theoretical maximum profit that results from obeying the predictions
     of the model.
     """
-    def eval(self, df: pd.dataframe) -> float:
+    def eval(self, df: pd.DataFrame) -> float:
         return df.profit.sum()/df.max_profit.sum()
 
 class MAPE(Metric):

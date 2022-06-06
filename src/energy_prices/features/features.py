@@ -11,9 +11,8 @@ class ColumnPicker(Transformer):
     """
     Picks the desired columns from the dataframe
     """
-    columns: List[str] = [
+    columns: List[str] = (
         'demand',
-        'price',
         'min_temperature',
         'max_temperature',
         'solar_exposure',
@@ -21,7 +20,15 @@ class ColumnPicker(Transformer):
         'school_day',
         'holiday',
         'week',
-    ]
+        'price',
+        'price_1',
+        'price_2',
+        'price_3',
+        'price_4',
+        'price_5',
+        'price_6',
+        'price_7',
+    )
 
     def fit(self, X: pd.DataFrame) -> None:
         """
@@ -34,7 +41,7 @@ class ColumnPicker(Transformer):
         Picks the desired columns from the dataframe.
         """
         X = X.copy()
-        return X[self.columns]
+        return X[list(self.columns)]
 
 @dataclass
 class NPreviousMedian(Transformer):
@@ -69,6 +76,7 @@ class HistoricalPrice(Transformer):
     the week for each date.
     """
     def __init__(self) -> None:
+        super().__init__()
         self.historical_prices = pd.DataFrame()
 
     def fit(self, X:pd.DataFrame) -> None:
@@ -93,13 +101,14 @@ class HistoricalDemand(Transformer):
     the week for each date.
     """
     def __init__(self) -> None:
-        self.historical_prices = pd.DataFrame()
+        super().__init__()
+        self.historical_demand = pd.DataFrame()
 
     def fit(self, X:pd.DataFrame) -> None:
         """
         Find the historical prices for each week using only data from previous years.
         """
-        self.historical_prices = X.groupby('week').demand.median().to_frame('historical_median_demand')
+        self.historical_demand = X.groupby('week').demand.median().to_frame('historical_median_demand')
 
 
     def transform(self, X:pd.DataFrame) -> pd.DataFrame:
@@ -107,38 +116,7 @@ class HistoricalDemand(Transformer):
         Adds column with historical median to dataframe.
         """
         X = X.copy()
-        X = X.merge(self.historical_prices, on='week')
-
-        return X
-
-
-class HistoricalDemand(Transformer):
-    """
-    Generates a new column that contains the historical median demand for 
-    the week for each date.
-    """
-    def __init__(self) -> None:
-        self.historical_demand = pd.DataFrame()
-
-    def fit(self, X:pd.DataFrame) -> None:
-        """
-        Find the historical demand for each week using only data from previous years.
-        """
-        df = pd.DataFrame()
-        for year in X.year.unique().sort():
-            df_medians = X[X.year < year].groupby('week').deman.median().to_frame('historical_median')
-            df_medians['year'] = year
-            df = pd.concat([df, df_medians])
-
-        self.historical_demand = df
-
-
-    def transform(self, X:pd.DataFrame) -> pd.DataFrame:
-        """
-        Adds column with historical median demand to dataframe.
-        """
-        X = X.copy()
-        X = X.merge(self.historical_demand, on=['year','week'])
+        X = X.merge(self.historical_demand, on='week')
 
         return X
 

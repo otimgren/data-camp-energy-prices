@@ -35,12 +35,12 @@ class LGBMRegressor(Model):
         """
         self.model.fit(X, y)
         
-    def predict(self, X) -> pd.DataFrame:
+    def predict(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Makes predictions based on features in X.
         """
-        y_pred = self.model.predict(X)
-        preds = pd.DataFrame(data=y_pred)
+        preds = X.copy()
+        preds['predicted_price'] = self.model.predict(X)
 
         return preds
 

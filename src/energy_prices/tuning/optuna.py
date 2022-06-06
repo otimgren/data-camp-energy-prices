@@ -57,6 +57,7 @@ class OptunaHPOptimizer:
             self.pipeline.model.set_params(model_params)
 
             # Cross validate the model
+            X = self.cv.generate_folds(X)
             cv_result = self.cv.cross_validate(self.pipeline, X)
 
             # Find the value of the relevant metric
@@ -65,7 +66,7 @@ class OptunaHPOptimizer:
 
         self.objective = objective
 
-    def optimize(self, X:pd.DataFrame, n_trials: int = 10)->None:
+    def optimize(self, X:pd.DataFrame, n_trials: int = 100)->None:
         """
         Run the optimization study.
         """

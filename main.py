@@ -49,10 +49,11 @@ def cross_validate(pipeline: Pipeline, train: pd.DataFrame) -> None:
     Cross validates the pipeline using data in train.
     """
     # Define cross validator
-    metrics = [Accuracy()]
+    metrics = [MAPE(), POMP(), CorrectBuyPercentage()]
     cross_validator = CrossValidator(metrics)
     
     # Perform cross validation
+    train = cross_validator.generate_folds(train)
     result = cross_validator.cross_validate(pipeline, train)
     cross_validator.print_cv_results(result)
 
@@ -74,7 +75,7 @@ def tune_hyperparams(pipeline: Pipeline, train: pd.DataFrame) -> None:
     optimizer = OptunaHPOptimizer(pipeline, cross_validator)
 
     # Run the optimizer
-    optimizer.optimize(train, n_trials=10)
+    optimizer.optimize(train, n_trials=100)
 
     # Get the best parameters
     best_params = optimizer.get_best_params()
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Add arguments
-    parser.add_argument("--model", type=str, default='WomenSurviveModel')
+    parser.add_argument("--model", type=str, default='LGBMRegressor')
     parser.add_argument("--predict", action='store_true')
     parser.add_argument("--cv", action='store_true')
     parser.add_argument("--tune", action='store_true')
